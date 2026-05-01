@@ -1,0 +1,32 @@
+# Portfolio Price Monitor — Hourly 11AM-3PM IST (5:30AM-9:30AM UTC) on market days
+name: Portfolio Monitor
+
+on:
+  schedule:
+    - cron: '30 5 * * 1-5'   # 11:00 AM IST
+    - cron: '30 6 * * 1-5'   # 12:00 PM IST
+    - cron: '30 7 * * 1-5'   # 1:00 PM IST
+    - cron: '30 8 * * 1-5'   # 2:00 PM IST
+    - cron: '30 9 * * 1-5'   # 3:00 PM IST
+  workflow_dispatch:
+
+jobs:
+  portfolio-monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run portfolio monitor
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python portfolio_monitor.py

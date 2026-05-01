@@ -1,0 +1,77 @@
+Stock,Industry Vertical,Market Cap Classification
+Amara Raja Batteries,Auto Components,Midcap
+Aster DM Healthcare,Healthcare,Midcap
+Canara Bank,Banking,Largecap
+COALINDIA,Mining,Nifty 50 (Largecap)
+Dr Reddy,Pharmaceuticals,Nifty 50 (Largecap)
+Eicher Motors,Automobile,Nifty 50 (Largecap)
+Equitas Small Fin Bank,Banking,Smallcap
+Exide Ind,Auto Components,Midcap
+Federal Bank,Banking,Midcap
+Goldbees,ETF,ETF
+HCL Tech,IT,Nifty 50 (Largecap)
+HDFC Bank,Banking,Nifty 50 (Largecap)
+ICICI Bank,Banking,Nifty 50 (Largecap)
+IDFC First,Banking,Midcap
+INDUSIND Bank,Banking,Largecap
+INFY,IT,Nifty 50 (Largecap)
+IOC,Oil & Gas,Largecap
+IRCTC,Tourism / Railways,Midcap
+ITC,FMCG,Nifty 50 (Largecap)
+ITC HOTELS,Hospitality,Midcap
+Kotak bank,Banking,Nifty 50 (Largecap)
+KPIT TECH,IT,Midcap
+KTK Bank,Banking,Smallcap
+Manappuram,NBFC,Midcap
+Motilal Oswald,Financial Services,Midcap
+Muthoot Fin,NBFC,Largecap
+Natco Pharma,Pharmaceuticals,Midcap
+NIFTYBEES,ETF,ETF
+ONGC,Oil & Gas,Nifty 50 (Largecap)
+Piramal fin,NBFC,Midcap
+Silverbees,ETF,ETF
+South Indian Bank,Banking,Smallcap
+Stovekraft,Consumer Durables,Smallcap
+Sunpharma,Pharmaceuticals,Nifty 50 (Largecap)
+Tata Chemicals,Chemicals,Midcap
+Tata Steel,Metals & Mining,Nifty 50 (Largecap)
+TCS,IT,Nifty 50 (Largecap)
+Tech Mahindra,IT,Nifty 50 (Largecap)
+Thangamayil,Retail / Jewellery,Smallcap
+Tamilnadu mercantile Bank,Banking,Smallcap
+TMCV,Automobile,Midcap
+TMPV,Automobile,Nifty 50 (Largecap)
+Trident,Textiles,Smallcap
+Ujjivan Small Fin Bank,Banking,Smallcap
+Wipro,IT,Nifty 50 (Largecap)
+Zydus Life Sciences,Pharmaceuticals,Largecap
+
+=== CLASSIFICATION BY INDUSTRY VERTICAL ===,,
+Industry,Stocks,Count
+Auto Components,Amara Raja Batteries; Exide Ind,2
+Automobile,Eicher Motors; TMCV; TMPV,3
+Banking,Canara Bank; Equitas Small Fin Bank; Federal Bank; HDFC Bank; ICICI Bank; IDFC First; INDUSIND Bank; Kotak bank; KTK Bank; South Indian Bank; Tamilnadu mercantile Bank; Ujjivan Small Fin Bank,12
+Chemicals,Tata Chemicals,1
+Consumer Durables,Stovekraft,1
+ETF,Goldbees; NIFTYBEES; Silverbees,3
+FMCG,ITC,1
+Financial Services,Motilal Oswald,1
+Healthcare,Aster DM Healthcare,1
+Hospitality,ITC HOTELS,1
+IT,HCL Tech; INFY; KPIT TECH; TCS; Tech Mahindra; Wipro,6
+Metals & Mining,Tata Steel,1
+Mining,COALINDIA,1
+NBFC,Manappuram; Muthoot Fin; Piramal fin,3
+Oil & Gas,IOC; ONGC,2
+Pharmaceuticals,Dr Reddy; Natco Pharma; Sunpharma; Zydus Life Sciences,4
+Retail / Jewellery,Thangamayil,1
+Textiles,Trident,1
+Tourism / Railways,IRCTC,1
+
+=== CLASSIFICATION BY MARKET CAP (NIFTY) ===,,
+Classification,Stocks,Count
+Nifty 50 (Largecap),COALINDIA; Dr Reddy; Eicher Motors; HCL Tech; HDFC Bank; ICICI Bank; INFY; ITC; Kotak bank; ONGC; Sunpharma; Tata Steel; TCS; Tech Mahindra; TMPV; Wipro,16
+Largecap,Canara Bank; INDUSIND Bank; IOC; Muthoot Fin; Zydus Life Sciences,5
+Midcap,Amara Raja Batteries; Aster DM Healthcare; Exide Ind; Federal Bank; IDFC First; IRCTC; ITC HOTELS; KPIT TECH; Manappuram; Motilal Oswald; Natco Pharma; Piramal fin; Tata Chemicals; TMCV,14
+Smallcap,Equitas Small Fin Bank; KTK Bank; South Indian Bank; Stovekraft; Thangamayil; Tamilnadu mercantile Bank; Trident; Ujjivan Small Fin Bank,8
+ETF,Goldbees; NIFTYBEES; Silverbees,3

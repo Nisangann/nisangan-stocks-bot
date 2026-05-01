@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Logs (generated at runtime)
+logs/
+
+# Local data snapshots (regenerated each run)
+mf_data/
+fii_dii_data/
+
+# macOS
+.DS_Store
+._*
+
+# IDE
+.vscode/
+.idea/
+
+# Excel output (local only)
+*.xlsx

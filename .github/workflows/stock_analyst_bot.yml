@@ -1,0 +1,36 @@
+# Stock Analyst Bot — Always-on interactive Telegram bot
+# Runs continuously, re-triggers itself every 5 hours to stay alive
+name: Stock Analyst Bot
+
+on:
+  schedule:
+    - cron: '0 */5 * * *'    # Every 5 hours as safety net restart
+  workflow_dispatch:
+
+concurrency:
+  group: stock-analyst-bot
+  cancel-in-progress: true   # Only one instance at a time
+
+jobs:
+  analyst-bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350      # ~5h50m (just under 6h GitHub max)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run stock analyst bot
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: |
+          timeout 20400 python stock_analyst_bot.py || true
+          # 20400s = 5h40m, exits cleanly before GitHub's 6h limit
+          # The cron schedule re-triggers this every 5h for continuity

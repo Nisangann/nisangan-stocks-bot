@@ -1,0 +1,28 @@
+# MF Shadow Tracker — Saturday 12:00 PM IST (6:30 AM UTC)
+name: MF Shadow Tracker
+
+on:
+  schedule:
+    - cron: '30 6 * * 6'     # 6:30 AM UTC = 12:00 PM IST, Saturday
+  workflow_dispatch:
+
+jobs:
+  mf-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run MF shadow tracker
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python mf_shadow.py
