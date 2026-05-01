@@ -66,9 +66,10 @@ NEWS_SOURCES = [
 ]
 
 MAX_NEWS_ITEMS_PER_SECTION = 3
-LOG_FILE = "/Users/nisan-12643/Documents/Stocks/logs/digest.log"
-PORTFOLIO_CSV = "/Users/nisan-12643/Documents/Stocks/My equities_Sheet1.csv"
-SUMMARY_CSV = "/Users/nisan-12643/Documents/Stocks/My equities_Summary.csv"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_FILE = os.path.join(SCRIPT_DIR, "logs", "digest.log")
+PORTFOLIO_CSV = os.path.join(SCRIPT_DIR, "My equities_Sheet1.csv")
+SUMMARY_CSV = os.path.join(SCRIPT_DIR, "My equities_Summary.csv")
 
 # Gift Nifty source (for pre-market outlook)
 GIFT_NIFTY_URL = "https://www.moneycontrol.com/indian-indices/gift-nifty-24.html"
