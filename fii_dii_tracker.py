@@ -40,8 +40,8 @@ LOG_DIR = os.path.join(SCRIPT_DIR, "logs")
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "8758398799:AAHeDwol7nHrElVEUKbayMsLuVdM6eXoBFk")
-CHAT_ID = os.environ.get("CHAT_ID", "927307437")
+BOT_TOKEN = os.environ["BOT_TOKEN"]
+CHAT_ID = os.environ["CHAT_ID"]
 
 _SSL_CTX = ssl.create_default_context()
 _SSL_CTX.check_hostname = False

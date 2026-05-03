@@ -21,8 +21,8 @@ from datetime import datetime, date
 import yfinance as yf
 
 # ── Configuration ──────────────────────────────────────────────────────────
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "8758398799:AAHeDwol7nHrElVEUKbayMsLuVdM6eXoBFk")
-CHAT_ID = os.environ.get("CHAT_ID", "927307437")
+BOT_TOKEN = os.environ["BOT_TOKEN"]
+CHAT_ID = os.environ["CHAT_ID"]
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PORTFOLIO_CSV = os.path.join(SCRIPT_DIR, "My equities_Sheet1.csv")
