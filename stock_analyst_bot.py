@@ -19,6 +19,7 @@ import logging
 import time
 import os
 import re
+import sys
 import html as html_mod
 import urllib.request
 from datetime import datetime
@@ -655,13 +656,13 @@ def send_typing_action():
         pass
 
 
-def poll_telegram(offset: int = 0) -> tuple:
+def poll_telegram(offset: int = 0, timeout: int = 30) -> tuple:
     """Long-poll Telegram for new messages. Returns (updates, new_offset)."""
     url = (f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
-           f"?offset={offset}&timeout=30&allowed_updates=[\"message\"]")
+           f"?offset={offset}&timeout={timeout}&allowed_updates=[\"message\"]")
     try:
         req = urllib.request.Request(url)
-        resp = urllib.request.urlopen(req, timeout=35, context=_SSL_CTX)
+        resp = urllib.request.urlopen(req, timeout=timeout + 5, context=_SSL_CTX)
         data = json.loads(resp.read())
         if data.get("ok"):
             return data.get("result", []), offset
@@ -669,6 +670,101 @@ def poll_telegram(offset: int = 0) -> tuple:
     except Exception as e:
         logger.warning(f"Poll error: {e}")
         return [], offset
+
+
+def handle_update(update: dict) -> None:
+    """Process a single Telegram update if it is a stock command."""
+    msg = update.get("message", {})
+    text = msg.get("text", "").strip()
+    msg_id = msg.get("message_id")
+    chat_id = msg.get("chat", {}).get("id")
+
+    # Only respond to messages from our chat
+    if str(chat_id) != CHAT_ID:
+        return
+
+    # Must start with / to be a command
+    if not text.startswith("/"):
+        return
+
+    # Extract stock name (remove the /)
+    query = text[1:].strip()
+
+    # Skip bot commands like /start, /help
+    if query.lower() in ("start", "help", "stop"):
+        if query.lower() == "help":
+            send_telegram(
+                "📖 *Stock Analysis Bot*\n\n"
+                "Send `/STOCKNAME` to get deep analysis.\n\n"
+                "Examples:\n"
+                "• `/KPIT`\n"
+                "• `/Tata Chemicals`\n"
+                "• `/ITC`\n"
+                "• `/Dr Reddy`\n\n"
+                "Works with portfolio stocks + NSE symbols.\n"
+                "Case-insensitive, partial matches OK."
+            )
+        return
+
+    logger.info(f"Received query: /{query}")
+
+    # Resolve to symbol
+    symbol, display_name = resolve_symbol(query)
+    if not symbol:
+        send_telegram(
+            f"❓ Could not find stock matching `{query}`.\n"
+            "Try the full name or NSE symbol (e.g., /KPIT, /Tata Chemicals)",
+            reply_to=msg_id,
+        )
+        return
+
+    # Send typing indicator
+    send_typing_action()
+
+    # Build analysis
+    logger.info(f"Analyzing {display_name} ({symbol})...")
+    analysis = build_analysis(symbol, display_name)
+
+    # Send response
+    if len(analysis) > 4000:
+        # Split at section boundaries
+        parts = analysis.split("\n*")
+        current_part = parts[0]
+        for part in parts[1:]:
+            if len(current_part) + len(part) + 2 > 4000:
+                send_telegram(current_part, reply_to=msg_id)
+                current_part = "*" + part
+            else:
+                current_part += "\n*" + part
+        if current_part:
+            send_telegram(current_part, reply_to=msg_id)
+    else:
+        send_telegram(analysis, reply_to=msg_id)
+
+    logger.info(f"Analysis sent for {display_name}")
+
+
+def acknowledge_updates(offset: int) -> None:
+    """Mark Telegram updates before offset as processed."""
+    poll_telegram(offset, timeout=0)
+
+
+def run_once() -> None:
+    """Process pending Telegram commands once and exit for GitHub Actions."""
+    logger.info("Stock Analyst Bot one-shot run starting...")
+
+    updates, _ = poll_telegram(0, timeout=0)
+    if not updates:
+        logger.info("No pending Telegram updates.")
+        return
+
+    next_offset = 0
+    for update in updates:
+        next_offset = update["update_id"] + 1
+        handle_update(update)
+
+    acknowledge_updates(next_offset)
+    logger.info(f"Processed {len(updates)} Telegram update(s).")
 
 
 def main():
@@ -690,75 +786,7 @@ def main():
 
             for update in updates:
                 offset = update["update_id"] + 1
-
-                msg = update.get("message", {})
-                text = msg.get("text", "").strip()
-                msg_id = msg.get("message_id")
-                chat_id = msg.get("chat", {}).get("id")
-
-                # Only respond to messages from our chat
-                if str(chat_id) != CHAT_ID:
-                    continue
-
-                # Must start with / to be a command
-                if not text.startswith("/"):
-                    continue
-
-                # Extract stock name (remove the /)
-                query = text[1:].strip()
-
-                # Skip bot commands like /start, /help
-                if query.lower() in ("start", "help", "stop"):
-                    if query.lower() == "help":
-                        send_telegram(
-                            "📖 *Stock Analysis Bot*\n\n"
-                            "Send `/STOCKNAME` to get deep analysis.\n\n"
-                            "Examples:\n"
-                            "• `/KPIT`\n"
-                            "• `/Tata Chemicals`\n"
-                            "• `/ITC`\n"
-                            "• `/Dr Reddy`\n\n"
-                            "Works with portfolio stocks + NSE symbols.\n"
-                            "Case-insensitive, partial matches OK."
-                        )
-                    continue
-
-                logger.info(f"Received query: /{query}")
-
-                # Resolve to symbol
-                symbol, display_name = resolve_symbol(query)
-                if not symbol:
-                    send_telegram(
-                        f"❓ Could not find stock matching `{query}`.\n"
-                        "Try the full name or NSE symbol (e.g., /KPIT, /Tata Chemicals)",
-                        reply_to=msg_id,
-                    )
-                    continue
-
-                # Send typing indicator
-                send_typing_action()
-
-                # Build analysis
-                logger.info(f"Analyzing {display_name} ({symbol})...")
-                analysis = build_analysis(symbol, display_name)
-
-                # Send response
-                if len(analysis) > 4000:
-                    # Split at section boundaries
-                    parts = analysis.split("\n*")
-                    current_part = parts[0]
-                    for part in parts[1:]:
-                        if len(current_part) + len(part) + 2 > 4000:
-                            send_telegram(current_part, reply_to=msg_id)
-                            current_part = "*" + part
-                        else:
-                            current_part += "\n*" + part
-                    if current_part:
-                        send_telegram(current_part, reply_to=msg_id)
-                else:
-                    send_telegram(analysis, reply_to=msg_id)
-
-                logger.info(f"Analysis sent for {display_name}")
+                handle_update(update)
 
         except KeyboardInterrupt:
             logger.info("Bot stopped by user.")
@@ -769,4 +797,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if "--once" in sys.argv:
+        run_once()
+    else:
+        main()

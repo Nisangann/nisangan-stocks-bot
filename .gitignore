@@ -26,3 +26,4 @@ fii_dii_data/
 
 # Excel output (local only)
 *.xlsx
+.env

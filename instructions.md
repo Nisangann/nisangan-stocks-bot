@@ -86,9 +86,9 @@ All classifications were written to the **Summary** sheet in `My equities.xlsx`,
 | `My equities_Sheet1.csv` | Original portfolio data (updated with avg. holding price column) |
 | `My equities_Summary.csv` | Summary classifications (CSV version) |
 | `instructions.md` | This file — documents all steps taken |
-| `morning_digest.py` | **Daily morning news digest bot** — runs at 6:45 AM IST |
+| `morning_digest.py` | **Daily morning news digest bot** — runs from GitHub Actions at 6:00 AM IST |
 | `portfolio_monitor.py` | **Hourly price monitor** — runs 11 AM-3 PM on market days |
-| `stock_analyst_bot.py` | **Interactive analyst bot** — responds to /STOCKNAME commands 24/7 |
+| `stock_analyst_bot.py` | **Interactive analyst bot** — GitHub Actions checks for /STOCKNAME commands every 5 minutes |
 | `logs/digest.log` | Log file for digest bot runs |
 | `logs/portfolio_monitor.log` | Log file for portfolio monitor runs |
 
@@ -145,14 +145,12 @@ Every morning at 6:45 AM, the script:
 - **Phase 2:** If still no internet → retry every 20 mins indefinitely until connected
 - Digest is sent the moment internet becomes available
 
-### Scheduling (launchd)
-- **Plist file:** `~/Library/LaunchAgents/com.nisangan.morningdigest.plist`
-- **Schedule:** Daily at 6:45 AM
-- **Advantage over cron:** If Mac is asleep, launchd fires the job when Mac wakes up
-- **Commands:**
-  - Stop: `launchctl unload ~/Library/LaunchAgents/com.nisangan.morningdigest.plist`
-  - Start: `launchctl load ~/Library/LaunchAgents/com.nisangan.morningdigest.plist`
-  - Check: `launchctl list | grep nisangan`
+### Scheduling (GitHub Actions)
+- **Workflow:** `.github/workflows/morning-digest.yml`
+- **Schedule:** Daily at 6:00 AM IST (`30 0 * * *` UTC)
+- **Secrets required:** `BOT_TOKEN`, `CHAT_ID`
+- **Manual run:** GitHub Actions → Morning Digest → Run workflow
+- **Mac launchd:** Disable/remove the old morning digest plist so this job is not duplicated locally.
 
 ### Gold/Silver Price Source
 - **Primary:** BankBazaar Chennai pages (`bankbazaar.com/gold-rate-chennai.html` + `silver-rate-chennai.html`)
@@ -259,14 +257,12 @@ Send any of these formats on Telegram:
 | Support levels | Calculated from 6-month OHLC history |
 | News/sentiment | Google News RSS (India) |
 
-### Scheduling (launchd — always-on)
-- **Plist:** `~/Library/LaunchAgents/com.nisangan.stockanalyst.plist`
-- **KeepAlive:** true (auto-restarts if it crashes)
-- **RunAtLoad:** true (starts on login)
-- **Commands:**
-  - Stop: `launchctl unload ~/Library/LaunchAgents/com.nisangan.stockanalyst.plist`
-  - Start: `launchctl load ~/Library/LaunchAgents/com.nisangan.stockanalyst.plist`
-  - Check: `launchctl list | grep nisangan`
+### Scheduling (GitHub Actions)
+- **Workflow:** `.github/workflows/stock-analyst-on-demand.yml`
+- **Schedule:** Every 5 minutes (`*/5 * * * *` UTC)
+- **Secrets required:** `BOT_TOKEN`, `CHAT_ID`
+- **Mode:** `python stock_analyst_bot.py --once` processes pending Telegram commands and exits.
+- **Mac launchd:** Disable/remove the old stock analyst plist so this job is not duplicated locally.
 
 ### Log File
 - `logs/stock_analyst.log`

@@ -7,6 +7,7 @@ compiles a digest and sends it to Telegram.
 Sources: LiveMint, Moneycontrol, Economic Times Markets
 """
 
+import os
 import urllib.request
 import json
 import re
@@ -82,7 +83,6 @@ PHASE1_DURATION_SECS = 60 * 60   # 1 hour
 PHASE2_INTERVAL_SECS = 20 * 60
 
 # ── Logging ────────────────────────────────────────────────────────────────
-import os
 os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 logging.basicConfig(
     filename=LOG_FILE,
