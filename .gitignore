@@ -27,3 +27,13 @@ fii_dii_data/
 # Excel output (local only)
 *.xlsx
 .env
+
+# Mac-local jobs and control files
+fii_dii_tracker.py
+mf_shadow.py
+portfolio_monitor.py
+weekly_digest.py
+run_job.py
+run_job.sh
+stocks_ctl.sh
+instructions.md
